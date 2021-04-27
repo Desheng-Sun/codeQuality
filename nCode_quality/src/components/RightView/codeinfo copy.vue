@@ -5,7 +5,7 @@
       <div v-if="isData">
         <div class="detail">
           <table class="source_code">
-            <tbody v-if="!isFileChange">
+            <tbody >
               <tr
                 v-for="(t, index) in trData"
                 :key="'notfilechange_' + index"
@@ -43,66 +43,16 @@
                       :key="index + 'issues_' + issues_index"
                       v-on:click="issuesclick($event)"
                       :value="issues.id"
-                      class="issuesinfo_top"
-                    >
-                      rule: {{ issues.rule }}, issue_seq:{{ issues.seq }}
-                    </div>
-                  </div>
-                </td>
-                <td class="code_context">{{ t.codeContext }}</td>
-              </tr>
-            </tbody>
-            <tbody v-else>
-              <tr
-                v-for="(t, index) in trData"
-                :key="'filechange_' + index"
-                :class="t.trClass"
-                :data-line-number="t.line"
-              >
-                <td class="code_context">{{ t.codeContextNow }}</td>
-                <td class="line_num">{{ t.lineNow }}</td>
-                <td class="lineinfo">
-                  <button
-                    :class="t.lineInfoButtonClassNow"
-                    type="botton"
-                    v-on:click="lineinfoclick($event)"
-                    :data-line-number="t.line"
-                    data-line-NaB="now"
-                  >
-                    {{ t.commitUserNow }}
-                  </button>
-                  <div class="lineinfo_detail">
-                    <div class="lineinfo_top">{{ t.commitIdNow }}</div>
-                    <div class="lineinfo_top">{{ t.commitHashNow }}</div>
-                    <div class="lineinfo_top">{{ t.commitUserNow }}</div>
-                    <div class="lineinfo_top">{{ t.commitDateNow }}</div>
-                  </div>
-                </td>
-                <td class="line_issues">
-                  <button
-                    :class="t.lineIssuesButtonClassNow"
-                    type="button"
-                    v-on:click="issuesinfoclick($event)"
-                    :data-line-number="t.line"
-                    data-line-NaB="now"
-                  >
-                    ...
-                  </button>
-                  <div class="lineissue_detail" v-if="t.issuesNowIn">
-                    <div
-                      v-for="(issues, issues_index) in t.lineIssuesNowDetial"
-                      :key="index + 'issuesnow_' + issues_index"
-                      v-on:click="issuesclick($event)"
-                      :value="issues.id"
                       :class="issues.divClass"
                     >
                       rule: {{ issues.rule }}, issue_seq:{{ issues.seq }}
                     </div>
                   </div>
                 </td>
+                <td class="code_context">{{ t.codeContext }}</td>
 
-                <td class="line_num before">{{ t.lineBefore }}</td>
-                <td class="lineinfo before">
+                <td class="line_num before" v-if="isFileChange">{{ t.lineBefore }}</td>
+                <td class="lineinfo before" v-if="isFileChange">
                   <button
                     :class="t.lineInfoButtonClassBefore"
                     type="button"
@@ -120,7 +70,7 @@
                   </div>
                 </td>
 
-                <td class="line_issues before">
+                <td class="line_issues before" v-if="isFileChange">
                   <button
                     :class="t.lineIssuesButtonClassBefore"
                     type="button"
@@ -142,9 +92,10 @@
                     </div>
                   </div>
                 </td>
-                <td class="code_context before">{{ t.codeContextBefore }}</td>
+                <td class="code_context before" v-if="isFileChange">{{ t.codeContextBefore }}</td>
               </tr>
             </tbody>
+
           </table>
         </div>
       </div>
@@ -264,16 +215,16 @@ export default {
           if (i % 2 == 0) {
             trClass = "line_Double";
           }
-          let lineNow = rawData["data"][i]["fileNow"]["line"];
-          let lineInfoButtonClassNow = "";
-          let commitIdNow = "";
-          let commitHashNow = "";
-          let commitUserNow = "";
-          let commitDateNow = "";
-          let lineIssuesButtonClassNow = "line_issues_false";
-          let issuesNowIn = false;
-          let lineIssuesNowDetial = [];
-          let codeContextNow = "";
+          let line = rawData["data"][i]["fileNow"]["line"];
+          let lineInfoButtonClass = "";
+          let commitId = "";
+          let commitHash = "";
+          let commitUser = "";
+          let commitDate = "";
+          let lineIssuesButtonClass = "line_issues_false";
+          let issuesIn = false;
+          let lineIssuesDetial = [];
+          let codeContext = "";
           let lineBefore = rawData["data"][i]["fileBefore"]["line"];
           let lineInfoButtonClassBefore = "";
           let commitIdBefore = "";
@@ -285,11 +236,11 @@ export default {
           let lineIssuesBeforeDetial = [];
           let codeContextBefore = "";
           if (parseInt(rawData["data"][i]["fileNow"]["line"]) == 0) {
-            lineInfoButtonClassNow = " IsUser_false";
+            lineInfoButtonClass = " IsUser_false";
             lineInfoButtonClassBefore = " IsUser_false";
             if (rawData["data"][i]["fileNow"]["issues"].length > 0) {
-              lineIssuesButtonClassNow = "line_issues_true";
-              issuesNowIn = true;
+              lineIssuesButtonClass = "line_issues_true";
+              issuesIn = true;
             } else {
               continue;
             }
@@ -300,15 +251,15 @@ export default {
                 issuesAdd = "issues_new_true";
                 divClass = "issuesinfo_top_change";
               }
-              lineIssuesNowDetial.push({
+              lineIssuesDetial.push({
                 id: rawData["data"][i]["fileNow"]["issues"][j]["issue_id"],
                 rule: rawData["data"][i]["fileNow"]["issues"][j]["rules"],
                 seq: rawData["data"][i]["fileNow"]["issues"][j]["issue_seq"],
                 divClass: divClass,
               });
             }
-            lineIssuesButtonClassNow =
-              lineIssuesButtonClassNow + " " + issuesAdd;
+            lineIssuesButtonClass =
+              lineIssuesButtonClass + " " + issuesAdd;
 
             let issuesDel = "issues_del_false";
             if (rawData["data"][i]["fileBefore"]["issues"].length > 0) {
@@ -333,24 +284,24 @@ export default {
             lineIssuesButtonClassBefore =
               lineIssuesButtonClassBefore + " " + issuesDel;
           } else {
-            if (lineNow == "") {
+            if (line == "") {
               trClass = trClass + " isDel";
-              lineInfoButtonClassNow = lineInfoButtonClassNow + "isDel";
+              lineInfoButtonClass = lineInfoButtonClass + "isDel";
               lineInfoButtonClassBefore = lineInfoButtonClassBefore + "isDel";
             } else if (lineBefore == "") {
               trClass = trClass + " isNew";
-              lineInfoButtonClassNow = lineInfoButtonClassNow + "isNew";
+              lineInfoButtonClass = lineInfoButtonClass + "isNew";
               lineInfoButtonClassBefore = lineInfoButtonClassBefore + "isNew";
             }
 
-            commitIdNow = rawData["data"][i]["fileNow"]["commit_id"];
-            commitHashNow = rawData["data"][i]["fileNow"]["commit_Hash"];
-            commitUserNow = rawData["data"][i]["fileNow"]["commiter"];
-            commitDateNow = rawData["data"][i]["fileNow"]["date"];
-            codeContextNow = rawData["data"][i]["fileNow"]["context"];
+            commitId = rawData["data"][i]["fileNow"]["commit_id"];
+            commitHash = rawData["data"][i]["fileNow"]["commit_Hash"];
+            commitUser = rawData["data"][i]["fileNow"]["commiter"];
+            commitDate = rawData["data"][i]["fileNow"]["date"];
+            codeContext = rawData["data"][i]["fileNow"]["context"];
             if (rawData["data"][i]["fileNow"]["issues"].length > 0) {
-              lineIssuesButtonClassNow = "line_issues_true";
-              issuesNowIn = true;
+              lineIssuesButtonClass = "line_issues_true";
+              issuesIn = true;
             }
             let issuesAdd = "issues_new_false";
             for (let j in rawData["data"][i]["fileNow"]["issues"]) {
@@ -359,15 +310,15 @@ export default {
                 issuesAdd = "issues_new_true";
                 divClass = "issuesinfo_top_change";
               }
-              lineIssuesNowDetial.push({
+              lineIssuesDetial.push({
                 id: rawData["data"][i]["fileNow"]["issues"][j]["issue_id"],
                 rule: rawData["data"][i]["fileNow"]["issues"][j]["rules"],
                 seq: rawData["data"][i]["fileNow"]["issues"][j]["issue_seq"],
                 divClass: divClass,
               });
             }
-            lineIssuesButtonClassNow =
-              lineIssuesButtonClassNow + " " + issuesAdd;
+            lineIssuesButtonClass =
+              lineIssuesButtonClass + " " + issuesAdd;
             commitIdBefore = rawData["data"][i]["fileBefore"]["commit_id"];
             commitHashBefore = rawData["data"][i]["fileBefore"]["commit_Hash"];
             commitUserBefore = rawData["data"][i]["fileBefore"]["commiter"];
@@ -403,16 +354,16 @@ export default {
           this.trData.push({
             trClass: trClass,
             line: i,
-            lineNow: lineNow,
-            lineInfoButtonClassNow: lineInfoButtonClassNow,
-            commitIdNow: commitIdNow,
-            commitHashNow: commitHashNow,
-            commitUserNow: commitUserNow,
-            commitDateNow: commitDateNow,
-            lineIssuesButtonClassNow: lineIssuesButtonClassNow,
-            issuesNowIn: issuesNowIn,
-            lineIssuesNowDetial: lineIssuesNowDetial,
-            codeContextNow: codeContextNow,
+            line: line,
+            lineInfoButtonClass: lineInfoButtonClass,
+            commitId: commitId,
+            commitHash: commitHash,
+            commitUser: commitUser,
+            commitDate: commitDate,
+            lineIssuesButtonClass: lineIssuesButtonClass,
+            issuesIn: issuesIn,
+            lineIssuesDetial: lineIssuesDetial,
+            codeContext: codeContext,
             lineBefore: lineBefore,
             lineInfoButtonClassBefore: lineInfoButtonClassBefore,
             commitIdBefore: commitIdBefore,
@@ -548,15 +499,51 @@ export default {
   white-space: nowrap; 
 }
 
-.lineinfo_detail {
+
+button:hover {
+  text-decoration: underline;
+  background-color: lightblue;
+  color: white;
+}
+
+.IsUser_false {
   display: none;
-  position: relative;
-  float: left;
+}
+
+/* 设置显示issues表格的格式 */
+.line_issues {
+  width: 30px;
+}
+
+.line_issues_true {
+  background-color: #ffff77;
+}
+
+.line_issues_false {
+  display: none;
+}
+
+.issues_new_true {
+  background-color: lightsalmon;
+}
+.issues_del_true {
+  background-color: lawngreen;
+}
+.lineissue_detail {
+  display: none;
+  position: absolute;
   padding: 5px 5px 5px 5px;
   border: 1px solid lightgray;
   background-color: aqua;
 }
 
+.lineinfo_detail {
+  display: none;
+  position: absolute;
+  padding: 5px 5px 5px 5px;
+  border: 1px solid lightgray;
+  background-color: aqua;
+}
 .issuesinfo_top {
   cursor: pointer;
 }
@@ -576,61 +563,6 @@ export default {
   text-decoration: underline;
   background-color: lightblue;
   color: white;
-}
-
-
-button:hover {
-  text-decoration: underline;
-  background-color: lightblue;
-  color: white;
-}
-
-.IsUser_false {
-  display: none;
-}
-
-/* 设置显示issues表格的格式 */
-.line_issues {
-  width: 30px;
-}
-
-.line_issues > button{  
-  padding: 0;  
-  height: 18px;
-  width: 100%;
-  background-color: #fff;
-  border: none;
-  cursor: pointer;
-  font-family: "Times New Roman", "宋体";
-  font-size: 1px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap; 
-
-}
-
-.line_issues_true {
-  background-color: #ffff77;
-}
-
-.line_issues_false {
-  display: none;
-}
-
-.issues_new_true {
-  background-color: lightsalmon;
-}
-.issues_del_true {
-  background-color: lawngreen;
-}
-
-.lineissue_detail {
-  display: none;
-  position: relative;
-  float: left;
-  padding: 5px 5px 5px 5px;
-  border: 1px solid lightgray;
-  background-color: aqua;
 }
 
 /* .lineinfo_detail::before{

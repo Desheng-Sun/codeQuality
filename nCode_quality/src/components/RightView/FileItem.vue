@@ -38,9 +38,8 @@ export default {
         },
       })
         .then((res) => {
-          let svg = d3
-        .select("#fileitem")
-        svg.selectAll("*").remove()
+          let svg = d3.select("#fileitem");
+          svg.selectAll("*").remove();
           let rawData = res.data;
           this.drawFileItem(rawData);
         })
@@ -92,24 +91,21 @@ export default {
         .attr("transform", "translate(0" + "," + 20 + ")");
 
       // Toggle children on click.
-      let click = d => {
+      let click = (d) => {
         if (d.children) {
           d._children = d.children;
           d.children = null;
         } else {
-          if(! d_children){
-            this.filename = d.data.path
-          }
-
+          this.filename = d.data.path;
           d.children = d._children;
           d._children = null;
         }
         update(d);
-      }
+      };
 
-      let color = d => {
+      let color = (d) => {
         return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
-      }
+      };
 
       let update = (source) => {
         // Compute the flattened node list.
@@ -289,6 +285,7 @@ export default {
   height: 100%;
   display: inline-block;
 }
+
 .node text {
   font: 8px times;
   pointer-events: none;
