@@ -4,19 +4,21 @@
       <p id="title">面向开发团队的代码质量可视分析系统</p>
     </div>
     <!-- 视图部分 -->
-    <div id = "content">      
+    <div id="content">
       <!--绘制左边的三个视图 -->
       <div id="leftView">
         <div id="topView">
           <!--绘制打包图 -->
           <div id="Top-LeftView">
-            <div id = "Top-Left-TopView">
+            <div id="Top-Left-TopView">
               <PackingView></PackingView>
             </div>
-            <div id = "Top-Left-BottomView"></div>
+            <div id="Top-Left-BottomView"></div>
           </div>
           <!--绘制主视图 -->
-          <div id="MainView"></div>
+          <div id="MainView">
+            <UserInfo></UserInfo>
+          </div>
         </div>
         <!--绘制散点图 -->
         <div id="BottomView">
@@ -26,19 +28,23 @@
       <!--绘制右边的一个视图 -->
       <div id="rightView">
         <FileItem></FileItem>
-       </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import ScatterView from '@/components/BottomView/ScatterView.vue'
-import PackingView from '@/components/LeftView/PackingView.vue'
-import FileItem from '@/components/RightView/FileItem'
+import ScatterView from "@/components/BottomView/ScatterView.vue";
+import PackingView from "@/components/LeftView/PackingView.vue";
+import FileItem from "@/components/RightView/FileItem.vue";
+import UserInfo from "./components/MainView/userinfo.vue";
 export default {
   name: "App",
   components: {
-    ScatterView, PackingView,FileItem
+    ScatterView,
+    PackingView,
+    FileItem,
+    UserInfo,
   },
 };
 </script>
@@ -95,53 +101,53 @@ body {
   float: midd;
 }
 
-#letfView{
-  width : 1400px;
+#letfView {
+  width: 1400px;
   height: 975px;
 }
 
-#topView{
+#topView {
   margin-left: 0.1cm;
-  width : 1450px;
+  width: 1450px;
   height: 700px;
 }
 
-#Top-LeftView{
-  width : 525px;
+#Top-LeftView {
+  width: 525px;
   height: 700px;
   display: inline-block;
 }
 
-#Top-Left-TopView{
-  width : 525px;
+#Top-Left-TopView {
+  width: 525px;
   height: 500px;
   background-color: rgb(255, 255, 255);
 }
 
-#Top-Left-BottomView{
-  width : 525px;
+#Top-Left-BottomView {
+  width: 525px;
   height: 196px;
   background-color: rgb(255, 255, 255);
   margin-top: 0.1cm;
 }
 
-#MainView{
+#MainView {
   width: 920px;
   height: 700px;
   background-color: rgb(255, 255, 255);
   display: inline-block;
 }
-#BottomView{
-  width : 1450px;
+#BottomView {
+  width: 1450px;
   height: 271.5px;
   background-color: rgb(255, 255, 255);
   margin-left: 0.1cm;
   margin-top: 0.1cm;
 }
 
-#rightView{
+#rightView {
   width: 598px;
-  height: 975px; 
+  height: 975px;
   background-color: rgb(255, 255, 255);
   margin-left: 0.1cm;
   margin-right: 0.1cm;

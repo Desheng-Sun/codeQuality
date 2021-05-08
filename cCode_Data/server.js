@@ -22,6 +22,8 @@ const port = 3000
 const path = require('path'); 
 const fs = require('fs'); 
 const bodyParser = require('body-parser');
+const { join } = require('path');
+const { json } = require('express');
 app.use(bodyParser.json());
 
 //模块引用
@@ -125,6 +127,25 @@ app.get('/file_line_info', function(req,res){
         }else{
             let text_data = data.toString()
             res.send(text_data);
+            res.end();
+        }
+    });
+});
+
+app.get('/userinfo', function(req,res){
+    let filedata = path.join(__dirname,'data/user_info_use.json/')
+    fs.readFile(filedata,'utf-8',function(err,data){
+        if(err){
+            console.error(err);
+        }else{
+            let json_data = JSON.parse(data);
+            let lastData = new Array();
+            lastData[0] = json_data.commit_id
+            lastData[1] = json_data.commit_Hash
+            lastData[2] = json_data.commiter
+            lastData[3] = json_data.date
+            lastData[4] = json_data.userdata
+            res.send(lastData);
             res.end();
         }
     });

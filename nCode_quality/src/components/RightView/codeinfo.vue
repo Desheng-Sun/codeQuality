@@ -173,7 +173,23 @@ export default {
     },
   },
   watch: {
-    nowid() {},
+    nowid() {
+      this.$axios({
+        method: "get",
+        url: "/file_line_info",
+        params: {
+          commit_id: this.nowid,
+          filename: this.cfilename.replace(/\//g, "_").replace(/`/g, "_"),
+        },
+      })
+        .then((res) => {
+          this.isData = false;
+          this.codeinfoData(res.data);
+        })
+        .catch((reason) => {
+          console.log(reason);
+        });
+    },
     cfilename() {
       this.$axios({
         method: "get",
@@ -646,5 +662,6 @@ button:hover {
   white-space: pre-wrap;
   font-family: "Times New Roman", "宋体";
   font-size: 1px;
+
 }
 </style>
