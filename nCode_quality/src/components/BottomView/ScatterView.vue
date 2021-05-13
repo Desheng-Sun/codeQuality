@@ -83,7 +83,7 @@ export default {
         },
         tooltip: {
           formatter: function (params) {
-            let str = codeQualityType[params.value[1]] + ": <br />";
+            let str =commitId[params.value[0]]  + "<br />" + codeQualityType[params.value[1]] + ": <br />";
             for (let i in infoName[params.value[1]]) {
               str =
                 str +
