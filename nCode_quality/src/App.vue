@@ -1,7 +1,9 @@
 <template>
   <div id="App">
     <div id="titleBox">
-      <p id="title">面向开发团队的代码质量可视分析系统</p>
+      <div id="title">
+        Visual analysis system of code quality for development teams
+      </div>
     </div>
     <!-- 视图部分 -->
     <div id="content">
@@ -13,7 +15,9 @@
             <div id="Top-Left-TopView">
               <PackingView></PackingView>
             </div>
-            <div id="Top-Left-BottomView"></div>
+            <div id="Top-Left-BottomView">
+              <IssuesInfo></IssuesInfo>
+            </div>
           </div>
           <!--绘制主视图 -->
           <div id="MainView">
@@ -38,13 +42,20 @@ import ScatterView from "@/components/BottomView/ScatterView.vue";
 import PackingView from "@/components/LeftView/PackingView.vue";
 import FileItem from "@/components/RightView/FileItem.vue";
 import UserInfo from "./components/MainView/userinfo.vue";
+import IssuesInfo from "./components/LeftView/IssuesInfo.vue";
 export default {
   name: "App",
+  computed: {
+    commitInfoNow() {
+      return this.$store.state.commitInfoNow;
+    },
+  },
   components: {
     ScatterView,
     PackingView,
     FileItem,
     UserInfo,
+    IssuesInfo,
   },
 };
 </script>
@@ -136,6 +147,8 @@ body {
   height: 700px;
   background-color: rgb(255, 255, 255);
   display: inline-block;
+  position: absolute;
+  margin-left: 0.1cm;
 }
 #BottomView {
   width: 1450px;

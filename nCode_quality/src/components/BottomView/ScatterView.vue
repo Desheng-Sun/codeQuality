@@ -8,7 +8,7 @@ export default {
   mounted() {
     this.$axios({
       method: "get",
-      url: "/commitinfo_SonarQube",
+      url: "/codeQualityInfo",
     })
       .then((res) => {
         let rawData = res.data;
@@ -21,55 +21,93 @@ export default {
   methods: {
     drawScatter(rawData) {
       let chart = echarts.init(document.getElementById("ScatterView"));
-      let commit_Hash = rawData.commit_Hash;
-      commit_Hash = rawData.commit_Hash;
-      let commit_name = rawData.commit_name;
-      let date = rawData.date;
-      let info_name = rawData.commitinfo_name;
+      let commitId = rawData.commitId;
+      let codeQualityType = rawData.codeQualityType;
+      let infoName = rawData.codeQualityInfoName;
       let data = rawData.data;
+      let color = [
+        "rgba(92, 151, 191,0.8)",
+        "rgba(250, 190, 88,0.8)",
+        "rgba(35, 203, 167,0.8)",
+        "rgba(226, 106, 106,0.8)",
+        "rgba(207, 0, 15,0.8)",
+        "rgba(123, 239, 178,0.8)",
+      ];
       let usedata = data.map(function (item) {
-        if (item[1] == 0 || item[1] == 4) {
+        if (item[1] == 0 || item[1] == 5) {
           return [item[0], item[1], item[2]];
-        } else if (item[1] == 1) {
-          return [item[0], item[1], item[4]];
-        } else if (item[1] == 2 || item[1] == 3) {
-          return [item[0], item[1], item[5]];
-        } else if (item[1] == 5) {
+        } else if (item[1] == 1 || item[1] == 2 || item[1] == 3) {
           return [item[0], item[1], item[3]];
+        } else if (item[1] == 4) {
+          return [item[0], item[1], item[6]];
         }
       });
-
+      let seriesInfo = () => {
+        let seriseNow = [];
+        for (let i in codeQualityType) {
+          let usedatanow = [];
+          for (let j in usedata) {
+            if (usedata[j][1] == i) {
+              usedatanow.push(usedata[j]);
+            }
+          }
+          seriseNow.push({
+            name: codeQualityType[i],
+            type: "scatter",
+            symbolSize: function (val) {
+              let size =
+                (val[2] /
+                  usedata[parseInt(usedata.length) + parseInt(val[1]) - 6][2]) *
+                100;
+              size = Math.sqrt(size);
+              return size;
+            },
+            color: color[i],
+            data: usedatanow,
+          });
+        }
+        return seriseNow;
+      };
       let option = {
         title: {
-          text: "Punch Card of Github",
+          text: "Code quality of each version",
+          textStyle:{
+            fontSize:"25",
+            fontFamily:"times new roman",
+            color:"darkgray",
+          }
         },
         legend: {
-          data: ["Punch Card"],
+          data: codeQualityType,
           left: "right",
         },
         tooltip: {
           formatter: function (params) {
-            let str = commit_name[params.value[1]] + ": \n";
-            for (let i in info_name[params.value[1]]) {
+            let str = codeQualityType[params.value[1]] + ": <br />";
+            for (let i in infoName[params.value[1]]) {
               str =
                 str +
-                info_name[params.value[1]][i] +
+                infoName[params.value[1]][i] +
                 " : " +
-                data[params.dataIndex][parseInt(i) + 2] +
-                "\n";
+                data[params.dataIndex*6 + params.value[1]][parseInt(i) + 2] +
+                "<br />";
             }
             return str;
           },
+          position: function (point, params, dom, rect, size) {
+            return [point[0], "10%"];
+          },
         },
         grid: {
-          left: 2,
-          bottom: 10,
-          right: 10,
+          left: "1%",
+          top:"8%",
+          bottom: "10%",
+          right: "1%",
           containLabel: true,
         },
         xAxis: {
           type: "category",
-          data: commit_Hash,
+          data: commitId,
           boundaryGap: false,
           axisLine: {
             show: false,
@@ -83,7 +121,7 @@ export default {
         },
         yAxis: {
           type: "category",
-          data: commit_name,
+          data: codeQualityType,
           axisLine: {
             show: false,
           },
@@ -102,27 +140,13 @@ export default {
             show: true,
             xAxisIndex: 0,
             type: "slider",
-            top: "93%",
-            bottom: "1%",
+            top: "90%",
+            bottom: "4%",
             start: 0,
             end: 100,
           },
         ],
-        series: [
-          {
-            name: "Punch Card",
-            type: "scatter",
-            symbolSize: function (val) {
-              let size =
-                (val[2] /
-                  usedata[parseInt(usedata.length) + parseInt(val[1]) - 6][2]) *
-                100;
-              size = Math.sqrt(size);
-              return size;
-            },
-            data: usedata,
-          },
-        ],
+        series: seriesInfo(),
       };
       chart.setOption(option);
     },
@@ -130,7 +154,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #ScatterView {
   width: 100%;
   height: 100%;

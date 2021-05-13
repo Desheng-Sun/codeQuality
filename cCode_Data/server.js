@@ -19,8 +19,8 @@
 const express = require('express');
 const app = express();
 const port = 3000
-const path = require('path'); 
-const fs = require('fs'); 
+const path = require('path');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const { join } = require('path');
 const { json } = require('express');
@@ -34,7 +34,7 @@ app.use(bodyParser.json());
 
 
 //设置允许跨域请求
-app.all('*', function(req, res, next) {
+app.all('*', function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*'); //访问控制允许来源：所有
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept'); //访问控制允许报头 X-Requested-With: xhr请求
     res.header('Access-Control-Allow-Metheds', 'PUT, POST, GET, DELETE, OPTIONS'); //访问控制允许方法
@@ -44,35 +44,32 @@ app.all('*', function(req, res, next) {
     next();
 });
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
 
 
-app.get('/commit_baseinfo', function(req,res){
-    let filedata = path.join(__dirname,'data/commit_baseinfo.json')
-    fs.readFile(filedata,'utf-8',function(err,data){
-        if(err){
+app.get('/commitBaseInfo', function (req, res) {
+    let filedata = path.join(__dirname, 'data/commitBaseInfo.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
             console.error(err);
-        }else{
-            let json_data = JSON.parse(data);
-            json_data.sort((a, b) =>{
-              return new Date(a["date"]) - new Date(b["date"]);
+        } else {
+            let jsonData = JSON.parse(data);
+            jsonData.sort((a, b) => {
+                return new Date(a["date"]) - new Date(b["date"]);
             })
-            let commit_id = []
-            let commit_Hash = []
-            let author = []
+            let commitId = []
+            let commitHash = []
+            let commiter = []
             let date = []
-            json_data.forEach(item => {            
-                commit_id.push(item.commit_id)
-                commit_Hash.push(item.commit_Hash)
-                author.push(item.author)
+            jsonData.forEach(item => {
+                commitId.push(item.commitId)
+                commitHash.push(item.commitHash)
+                commiter.push(item.commiter)
                 date.push(item.date)
             });
             let lastData = new Array();
-            lastData[0] = commit_id
-            lastData[1] = commit_Hash
-            lastData[2] = author
+            lastData[0] = commitId
+            lastData[1] = commitHash
+            lastData[2] = commiter
             lastData[3] = date
             res.send(lastData);
             res.end();
@@ -80,51 +77,51 @@ app.get('/commit_baseinfo', function(req,res){
     });
 });
 
-app.get('/userissueCountNum', function(req,res){
-    let filedata = path.join(__dirname,'data/' + req.query.commit_id +'/userissueCountNum.json')
-    fs.readFile(filedata,'utf-8',function(err,data){
-        if(err){
+app.get('/userissueCount', function (req, res) {
+    let filedata = path.join(__dirname, 'data/' + req.query.commitId + '/userissueCount.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
             console.error(err);
-        }else{
-            let json_data = JSON.parse(data);
-            res.send(json_data);
+        } else {
+            let jsonData = JSON.parse(data);
+            res.send(jsonData);
             res.end();
         }
     });
 });
 
-app.get('/commitinfo_SonarQube', function(req,res){
-    let filedata = path.join(__dirname,'data/commitinfo_use.json')
-    fs.readFile(filedata,'utf-8',function(err,data){
-        if(err){
+app.get('/codeQualityInfo', function (req, res) {
+    let filedata = path.join(__dirname, 'data/codeQualityInfo.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
             console.error(err);
-        }else{
-            let json_data = JSON.parse(data);
-            res.send(json_data);
+        } else {
+            let jsonData = JSON.parse(data);
+            res.send(jsonData);
             res.end();
         }
     });
 });
 
-app.get('/commit_filepath', function(req,res){
-    let filedata = path.join(__dirname,'data/' + req.query.commit_id +'/file_path.json')
-    fs.readFile(filedata,'utf-8',function(err,data){
-        if(err){
+app.get('/commitFilePath', function (req, res) {
+    let filedata = path.join(__dirname, 'data/' + req.query.commitId + '/filePath.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
             console.error(err);
-        }else{
-            let json_data = JSON.parse(data);
-            res.send(json_data);
+        } else {
+            let jsonData = JSON.parse(data);
+            res.send(jsonData);
             res.end();
         }
     });
 });
 
-app.get('/file_line_info', function(req,res){
-    let filedata = path.join(__dirname,'data/' + req.query.commit_id +'/file_line/' + req.query.filename + '.json')
-    fs.readFile(filedata,'utf-8',function(err,data){
-        if(err){
+app.get('/fileLineInfo', function (req, res) {
+    let filedata = path.join(__dirname, 'data/' + req.query.commitId + '/fileLine/' + req.query.filename + '.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
             console.error(err);
-        }else{
+        } else {
             let text_data = data.toString()
             res.send(text_data);
             res.end();
@@ -132,25 +129,125 @@ app.get('/file_line_info', function(req,res){
     });
 });
 
-app.get('/userinfo', function(req,res){
-    let filedata = path.join(__dirname,'data/user_info_use.json/')
-    fs.readFile(filedata,'utf-8',function(err,data){
-        if(err){
+app.get('/userinfo', function (req, res) {
+    let filedata = path.join(__dirname, 'data/userBaseInfo.json/')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
             console.error(err);
-        }else{
-            let json_data = JSON.parse(data);
+        } else {
+            let jsonData = JSON.parse(data);
             let lastData = new Array();
-            lastData[0] = json_data.commit_id
-            lastData[1] = json_data.commit_Hash
-            lastData[2] = json_data.commiter
-            lastData[3] = json_data.date
-            lastData[4] = json_data.userdata
+            lastData[0] = jsonData.commitId
+            lastData[1] = jsonData.commitHash
+            lastData[2] = jsonData.commiter
+            lastData[3] = jsonData.date
+            lastData[4] = jsonData.userdata
             res.send(lastData);
             res.end();
         }
     });
 });
 
+app.get('/commitInfo', function (req, res) {
+    let filedata = path.join(__dirname, 'data/commitBaseInfo.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
+            console.error(err);
+        } else {
+            let jsonData = JSON.parse(data);
+            jsonData.sort((a, b) => {
+                return new Date(a["date"]) - new Date(b["date"]);
+            })
+            let commitId = []
+            let commitHash = []
+            let commiter = []
+            let date = []
+            let filesChange = []
+            let lineAdd = []
+            let lineDel = []
+            let issuesAdd = []
+            let issuesDel = []
+            jsonData.forEach(item => {
+                commitId.push(item.commitId)
+                commitHash.push(item.commitHash)
+                commiter.push(item.commiter)
+                date.push(item.date)
+                filesChange.push(item.filesChange)
+                lineAdd.push(item.lineAdd)
+                lineDel.push(item.lineDel)
+                issuesAdd.push(item.issuesAdd)
+                issuesDel.push(item.issuesDel)
+            });
+            let lastData = new Array();
+            lastData[0] = commitId
+            lastData[1] = commitHash
+            lastData[2] = commiter
+            lastData[3] = date
+            lastData[4] = filesChange
+            lastData[5] = lineAdd
+            lastData[6] = lineDel
+            lastData[7] = issuesAdd
+            lastData[8] = issuesDel
+            res.send(lastData);
+            res.end()
+        }
+        
+    })
+})
+
+app.get('/UserInfoCompare', function (req, res) {
+    let filedata = path.join(__dirname, 'data/userBaseInfoCompare.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
+            console.error(err);
+        } else {
+            let jsonData = JSON.parse(data);
+            res.send(jsonData);
+            res.end()
+        }
+        
+    })
+})
+
+
+app.get('/IssuesInfo', function (req, res) {
+    let filedata = path.join(__dirname, 'data/' + req.query.commitId + '/issues.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
+            console.error(err);
+        } else {
+            let jsonData = JSON.parse(data);
+            res.send(jsonData);
+            res.end()
+        }
+    })
+})
+
+app.get('/RulesInfo', function (req, res) {
+    let filedata = path.join(__dirname, 'data/allRules.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
+            console.error(err);
+        } else {
+            let jsonData = JSON.parse(data);
+            res.send(jsonData);
+            res.end()
+        }
+    })
+})
+
+app.get('/FileQuality', function (req, res) {    
+    let filedata = path.join(__dirname, 'data/' + req.query.commitId + '/CodeQualityInfo.json')
+    fs.readFile(filedata, 'utf-8', function (err, data) {
+        if (err) {
+            console.error(err);
+        } else {
+            let jsonData = JSON.parse(data);
+            res.send(jsonData)
+            res.end()
+        }
+    })
+})
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`Example app listening at http://localhost:${port}`)
 })

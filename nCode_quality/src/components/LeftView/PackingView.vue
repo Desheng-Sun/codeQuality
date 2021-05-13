@@ -17,9 +17,19 @@ export default {
   mounted() {
     this.$axios({
       method: "get",
-      url: "/commit_baseinfo",
-    }).then((res) => {
+      url: "/commitBaseInfo",
+    })
+      .then((res) => {
         let rawData = res.data;
+        console.log(rawData)
+        this.$store.commit("setcommitInfoNow", {
+          newcommitInfoNow: [
+            rawData[0][rawData[0].length - 1],
+            rawData[1][rawData[0].length - 1],
+            rawData[2][rawData[0].length - 1],
+            rawData[3][rawData[0].length - 1],
+          ],
+        });
         this.drawPackingView(rawData);
       })
       .catch((reason) => {
@@ -29,73 +39,77 @@ export default {
   methods: {
     drawPackingView(rawData) {
       let chart = echarts.init(document.getElementById("timeline"));
-      let project_time = rawData[0];
+      let projectTime = rawData[0];
       let option = {
         timeline: {
-          data: project_time,
+          data: projectTime,
           axisType: "category",
           autoPlay: false,
-          playInterval: 1500, //播放速度
           realtime: false,
           left: "5%",
           right: "5%",
           bottom: "0%",
           width: "90%",
+          symbolSize: 10,
           //  height: null,
           label: {
             normal: {
-              textStyle: {
-                color: "red",
-              },
-            },
-            emphasis: {
-              textStyle: {
-                color: "red",
-              },
+              show: true,
+              color: "rgb(92, 151, 191)",
             },
           },
-          symbolSize: 10,
           lineStyle: {
-            color: "#red",
+            show: true,
+            color: "rgb(92, 151, 191)",
           },
-
+          itemStyle: {
+            show: true,
+            color: "rgb(92, 151, 191)",
+          },
           controlStyle: {
-            showNextBtn: true,
-            showPrevBtn: true,
-            normal: {
-              color: "#ff8800",
-              borderColor: "#ff8800",
-            },
-            emphasis: {
-              color: "red",
-              borderColor: "red",
-            },
+            show: true,
+            showPlayBtn: false,
+            color: "rgb(92, 151, 191)",
+            borderColor: "rgb(92, 151, 191)",
+          },
+          checkpointStyle: {
+            symbolSize: 13,
+            color: "rgb(115, 192, 222)",
+            borderWidth: 2,
+            borderColor: "rgb(255, 255, 138)",
           },
         },
       };
       chart.setOption(option);
       chart.on("timelinechanged", (timelineIndex) => {
-        this.$store.commit('setcommit_id', {
-          newid: project_time[timelineIndex.currentIndex]
-        })
-      })
-
+        this.$store.commit("setcommitId", {
+          newid: projectTime[timelineIndex.currentIndex],
+        });
+        this.$store.commit("setcommitInfoNow", {
+          newcommitInfoNow: [
+            rawData[0][timelineIndex.currentIndex],
+            rawData[1][timelineIndex.currentIndex],
+            rawData[2][timelineIndex.currentIndex],
+            rawData[3][timelineIndex.currentIndex],
+          ],
+        });
+      });
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 #packing {
   width: 100%;
   height: 100%;
 }
-#packingView{
+#packingView {
   width: 100%;
-  height: 400px;
+  height: 450px;
 }
-#timeline{
+#timeline {
   width: 100%;
-  height: 100px;
+  height: 50px;
 }
 </style>

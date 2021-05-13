@@ -1,5 +1,8 @@
 <template>
-  <div id="packingView"></div>
+  <div id="packingView">
+    <div id="pakingViewTitle">Commiter Code Quality Issues</div>
+    <div id="pakingViewdraw"></div>
+  </div>
 </template>
 
 <script>
@@ -8,7 +11,7 @@ import * as d3 from "d3";
 export default {
   computed: {
     nowid() {
-      return this.$store.state.commit_id;
+      return this.$store.state.commitId;
     },
   },
   watch: {
@@ -16,9 +19,9 @@ export default {
       console.log(this.nowid);
       this.$axios({
         method: "get",
-        url: "/userissueCountNum",
+        url: "/userissueCount",
         params: {
-          commit_id: this.nowid,
+          commitId: this.nowid,
         },
       })
         .then((res) => {
@@ -34,9 +37,9 @@ export default {
   mounted() {
     this.$axios({
       method: "get",
-      url: "/userissueCountNum",
+      url: "/userissueCount",
       params: {
-        commit_id: this.nowid,
+        commitId: this.nowid,
       },
     })
       .then((res) => {
@@ -56,7 +59,7 @@ export default {
       };
     },
     drawPackingTop(seriesData, maxDepth) {
-      let chart = echarts.init(document.getElementById("packingView"));
+      let chart = echarts.init(document.getElementById("pakingViewdraw"));
       let displayRoot = stratify();
       function stratify() {
         return d3
@@ -71,7 +74,17 @@ export default {
             return b.value - a.value;
           });
       }
-
+      let color = [
+        ["rgba(236, 100, 75,0.5)", "rgb(123, 239, 178)"],
+        [
+          "rgb(207, 0, 15)",
+          "rgb(159, 90, 253)",
+          "rgb(242, 120, 75)",
+          "rgb(82, 179, 217)",
+          "rgb(200, 247, 197)",
+        ],
+        ["rgb(244,67,54)", "rgb(255, 255, 126)", "rgb(135, 211, 124)"],
+      ];
       function overallLayout(params, api) {
         let context = params.context;
         d3
@@ -117,8 +130,45 @@ export default {
               .join("\n")
               .replace("-> ", "")
           : "";
-
         let z2 = api.value("depth") * 2;
+        let colornow = "";
+
+        let nodeitem = nodePath.split("->");
+        nodeitem = nodeitem[nodeitem.length - 1].trim();
+
+        if (node.depth == 0) {
+          colornow = "rgba(255, 255, 126, 0.5)";
+        } else if (node.depth == 1) {
+          colornow = "rgba(255, 236, 139, 0.5)";
+        } else if (node.depth == 2) {
+          if (nodeitem == "issuesAdd") {
+            colornow = color[0][0];
+          } else {
+            colornow = color[0][1];
+          }
+        } else if (node.depth == 3) {
+          if (nodeitem == "CRITICAL") {
+            colornow = color[1][0];
+          } else if (nodeitem == "BLOCKER") {
+            colornow = color[1][1];
+          } else if (nodeitem == "MAJOR") {
+            colornow = color[1][2];
+          } else if (nodeitem == "MINOR") {
+            colornow = color[1][3];
+          } else if (nodeitem == "INFO") {
+            colornow = color[1][4];
+          }
+        } else if (node.depth == 4) {
+          if (nodeitem == "BUG") {
+            colornow = color[2][0];
+          } else if (nodeitem == "VULNERABILITY") {
+            colornow = color[2][1];
+          } else if (nodeitem == "CODE_SMELL") {
+            colornow = color[2][2];
+          }
+        } else {
+          colornow = "rgb(255,255,255)";
+        }
         return {
           type: "circle",
           focus: focus,
@@ -151,7 +201,7 @@ export default {
           },
           style: {
             text: nodeName,
-            fill: api.visual("color"),
+            fill: colornow,
             fontFamily: "Arial",
             width: node.r * 1.3,
             overflow: "truncate",
@@ -174,14 +224,9 @@ export default {
         dataset: {
           source: seriesData,
         },
-        tooltip: {},
-        visualMap: {
-          show: false,
-          min: 0,
-          max: maxDepth,
-          dimension: "depth",
-          inRange: {
-            color: ["#006edd", "rgb(81, 172, 254)"],
+        tooltip: {
+          position: function (point, params, dom, rect, size) {
+            return [point[0], point[1]];
           },
         },
         hoverLayerThreshold: Infinity,
@@ -199,8 +244,13 @@ export default {
 
       chart.setOption(option);
       if ((chart._$handlers = {})) {
-        chart.on("click", function (params) {
+        chart.on("click", (params) => {
           drillDown(params.data.id);
+          let RulesKey = params.data.id.split("->");
+          RulesKey = RulesKey[RulesKey.length - 1].trim();
+          this.$store.commit("setIssues", {
+            newIssues: ["", this.nowid, RulesKey],
+          });
         });
 
         function drillDown(targetNodeId) {
@@ -231,3 +281,18 @@ export default {
   },
 };
 </script>
+<style scoped>
+#pakingViewTitle{
+  width: 525px;
+  height: 25px;
+  font-size: 25px;
+  font-family: 'Times New Roman', Times, serif;
+  text-align: left;
+  color: darkgray;
+  padding-bottom: 5px;
+}
+#pakingViewdraw{
+  width: 525px;
+  height: 420px;
+}
+</style>

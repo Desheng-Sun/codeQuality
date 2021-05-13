@@ -1,40 +1,47 @@
 <template>
   <div id="fileinfo">
-    <div id="fileitem"></div>
-    <div id="codeinfo">
-      <codeinfo :cfilename="filename"></codeinfo>
+    <div id="fileitem">
+      <div id="fileitemtitle">FileItem</div>
+    </div>
+    <div id="codeDetial">
+      <div id="codequality">
+        <filequality :cfileInfo="fileInfo"></filequality>
+      </div>
+      <div id="codeinfo">
+        <codeinfo :cfilename="filename"></codeinfo>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import echarts from "echarts";
 import * as d3 from "d3";
 import codeinfo from "./codeinfo";
+import filequality from "./fileQuality";
 
 export default {
-  components: { codeinfo },
+  components: {
+    codeinfo,
+    filequality,
+  },
   data() {
     return {
-      filename: "",
+      filename: [],
+      fileInfo: [],
     };
-  },
-  compoentens: {
-    codeinfo,
   },
   computed: {
     nowid() {
-      return this.$store.state.commit_id;
+      return this.$store.state.commitId;
     },
   },
   watch: {
     nowid() {
-      console.log(this.nowid);
       this.$axios({
         method: "get",
-        url: "/commit_filepath",
+        url: "/commitFilePath",
         params: {
-          commit_id: this.nowid,
+          commitId: this.nowid,
         },
       })
         .then((res) => {
@@ -51,9 +58,9 @@ export default {
   mounted() {
     this.$axios({
       method: "get",
-      url: "/commit_filepath",
+      url: "/commitFilePath",
       params: {
-        commit_id: this.nowid,
+        commitId: this.nowid,
       },
     })
       .then((res) => {
@@ -96,7 +103,13 @@ export default {
           d._children = d.children;
           d.children = null;
         } else {
-          this.filename = d.data.path;
+          this.filename = [d.data.path, data.nowCommitId];
+          this.fileInfo = [
+            d.data.path,
+            data.nowCommitId,
+            data.lastCommitId,
+            d.data.IsFileChange,
+          ];
           d.children = d._children;
           d._children = null;
         }
@@ -104,7 +117,11 @@ export default {
       };
 
       let color = (d) => {
-        return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+        return d._children
+          ? "rgb(35, 203, 167)"
+          : d.children
+          ? "rgb(123, 239, 178)"
+          : "rgb(232, 232, 232)";
       };
 
       let update = (source) => {
@@ -159,16 +176,15 @@ export default {
           })
           .style("fill", function (d) {
             if (d.data.IsIssuesChange == "True") {
-              return "rgb(244, 208, 63)";
+              return "rgb(226, 106, 106)";
             } else if (d.data.IsFileChange == "True") {
-              return "rgb(41, 241, 195)";
+              return "rgb(250, 190, 88)";
             } else if (d.data.IsIssuesIn == "True") {
-              return "rgb(107, 185, 240)";
+              return "rgb(92, 151, 191)";
             } else {
               return "gray";
             }
           });
-
         nodeEnter
           .append("text")
           .attr("dy", 3.5)
@@ -262,10 +278,12 @@ export default {
   height: 100%;
   display: inline-block;
 }
+
 #fileitem {
   width: 150px;
   height: 100%;
   display: inline-block;
+  font-size: 8px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -280,14 +298,34 @@ export default {
 #fileitem::-webkit-scrollbar-track {
   opacity: 1;
 }
-#codeinfo {
+
+#fileitemtitle {
+  width: 150px;
+  height: 15px;
+  font-size: 15px;
+  font-family: "Times New Roman", Times, serif;
+  text-align: center;
+  text-align: left;
+  padding-bottom: 5px;
+  color: darkgray;
+}
+#codeDetial {
   width: 430px;
   height: 100%;
   display: inline-block;
+  position: absolute;
 }
 
+#codequality {
+  width: 430px;
+  height: 75px;
+}
+
+#codeinfo {
+  width: 430px;
+  height: 900px;
+}
 .node text {
-  font: 8px times;
   pointer-events: none;
 }
 

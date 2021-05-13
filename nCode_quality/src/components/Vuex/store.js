@@ -6,12 +6,20 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   // 定义状态
   state: {
-    commit_id: "easyexcel_3"
+    commitId: "easyexcel_3",
+    Issues:[],
+    commitInfoNow:[]
   },
   mutations: {
-    setcommit_id(state, param) {
-      console.log(param.newid)
-      state.commit_id = param.newid
+    setcommitId(state, param) {
+      state.commitId = param.newid
+    },
+    setIssues(state, param) {
+      state.Issues = param.newIssues
+    },
+    setcommitInfoNow(state, param) {
+      state.commitInfoNow = param.newcommitInfoNow
+      console.log(state.commitInfoNow)
     }
   }
 })
