@@ -1,6 +1,6 @@
 <template>
   <div id="issues">
-    <div id = "issuesTitle">Isseus Infomation</div>
+    <div id = "issuesTitle">Issues Infomation</div>
     <div v-if="isIssuesInfo" class="detail">
       <div v-if="isIssues" class="issuesmeta">
         <div class="issuesPosition">
