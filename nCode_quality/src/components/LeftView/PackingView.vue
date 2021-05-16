@@ -21,7 +21,6 @@ export default {
     })
       .then((res) => {
         let rawData = res.data;
-        console.log(rawData)
         this.$store.commit("setcommitInfoNow", {
           newcommitInfoNow: [
             rawData[0][rawData[0].length - 1],

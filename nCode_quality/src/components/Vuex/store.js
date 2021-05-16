@@ -19,7 +19,6 @@ const store = new Vuex.Store({
     },
     setcommitInfoNow(state, param) {
       state.commitInfoNow = param.newcommitInfoNow
-      console.log(state.commitInfoNow)
     }
   }
 })

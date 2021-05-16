@@ -75,15 +75,19 @@ export default {
           });
       }
       let color = [
-        ["rgba(236, 100, 75,0.5)", "rgb(123, 239, 178)"],
+        ["rgba(236, 100, 75,0.5)", "rgba(123, 239, 178,0.5)"],
         [
-          "rgb(207, 0, 15)",
-          "rgb(159, 90, 253)",
-          "rgb(242, 120, 75)",
-          "rgb(82, 179, 217)",
-          "rgb(200, 247, 197)",
+          "rgba(207, 0, 15, 0.5)",
+          "rgba(159, 90, 253, 0.5)",
+          "rgba(242, 120, 75, 0.5)",
+          "rgba(82, 179, 217, 0.5)",
+          "rgba(200, 247, 197, 0.5)",
         ],
-        ["rgb(244,67,54)", "rgb(255, 255, 126)", "rgb(135, 211, 124)"],
+        [
+          "rgba(244,67,54, 0.5)",
+          "rgba(255, 255, 126, 0.5)",
+          "rgba(135, 211, 124, 0.5)",
+        ],
       ];
       function overallLayout(params, api) {
         let context = params.context;
@@ -167,7 +171,7 @@ export default {
             colornow = color[2][2];
           }
         } else {
-          colornow = "rgb(255,255,255)";
+          colornow = "rgba(244,244,244)";
         }
         return {
           type: "circle",
@@ -282,16 +286,16 @@ export default {
 };
 </script>
 <style scoped>
-#pakingViewTitle{
+#pakingViewTitle {
   width: 525px;
   height: 25px;
   font-size: 25px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   text-align: left;
   color: darkgray;
   padding-bottom: 5px;
 }
-#pakingViewdraw{
+#pakingViewdraw {
   width: 525px;
   height: 420px;
 }

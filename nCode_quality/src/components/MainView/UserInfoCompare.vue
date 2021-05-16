@@ -100,8 +100,8 @@ export default {
         parallel: {
           left: "5%",
           right: "5%",
-          bottom:"5%",
-          top:"35%",
+          bottom: "5%",
+          top: "35%",
 
           parallelAxisDefault: {
             type: "value",
@@ -131,19 +131,19 @@ export default {
         },
         parallelAxis: parallelAxisInfo(),
         tooltip: {
-          // show: true,
-          // trigger: "item",
-          // padding: 10,
-          // backgroundColor: "#222",
-          // borderColor: "#777",
-          // borderWidth: 1,
-          // position: function (point, params, dom, rect, size) {
-          //   return [point[0], point[1]];
-          // },
-          // formatter: function (params) {
-          //   console.log(params);
-          //   return params
-          // },
+          show: true,
+          trigger: "item",
+          padding: 10,
+          backgroundColor: "#222",
+          borderColor: "#777",
+          borderWidth: 1,
+          position: function (point, params, dom, rect, size) {
+            return [point[0], point[1]];
+          },
+          formatter: function (params) {
+            console.log(params);
+            return params
+          },
         },
         series: {
           name: "userInfo",
@@ -156,7 +156,6 @@ export default {
           },
         },
       };
-      console.log(option)
       chart.setOption(option);
     },
   },

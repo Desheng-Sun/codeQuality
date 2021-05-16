@@ -97,11 +97,11 @@ export default {
                 isMinus = -1;
               }
               if (params[i].data > 20) {
-                finalValue = 2000 + (params[i].data - 20) * 2800;
+                finalValue = 2000 + (params[i].data - 20) * 800;
               } else if (params[i].data > 10) {
-                finalValue = 500 + (params[i].data - 10) * 150;
+                finalValue = 100 + (params[i].data - 10) * 190;
               } else {
-                finalValue = params[i].data * 50;
+                finalValue = params[i].data * 10;
               }
               finalValue = finalValue * isMinus;
               finalValue = Math.round(finalValue);
@@ -137,12 +137,26 @@ export default {
           axisLabel: {
             inside: false,
             fontSize: 8,
-            formatter: function (value) {
-              if (Math.abs(value) >= 1000) {
-                return value / 1000 + "K";
-              } else {
-                return value;
+            formatter: function (value) {              
+              let isMinus = 1;
+              let finalValue = 0;
+              if (value < 0) {
+                value = -value;
+                isMinus = -1;
               }
+              if (value > 20) {
+                finalValue = 2000 + (value - 20) * 800;
+              } else if (value > 10) {
+                finalValue = 100 + (value - 10) * 190;
+              } else {
+                finalValue = value * 10;
+              }
+              finalValue = finalValue * isMinus;
+              finalValue = Math.round(finalValue);
+              if (Math.abs(finalValue) > 1000) {
+                finalValue = finalValue / 1000 + "k";
+              }
+              return finalValue
             },
           },
           axisTick: {

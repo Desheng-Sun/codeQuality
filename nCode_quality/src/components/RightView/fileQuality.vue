@@ -152,7 +152,7 @@ export default {
         },
         grid: {
           top: "0%",
-          left: "20%",
+          left: "25%",
           bottom: "0%",
           right: "10%",
         },
