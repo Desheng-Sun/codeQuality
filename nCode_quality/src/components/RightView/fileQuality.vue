@@ -121,7 +121,6 @@ export default {
             data: usedatanow,
           });
         }
-        console.log(seriesNow);
         return seriesNow;
       };
       console.log(yAxisData);
@@ -188,7 +187,6 @@ export default {
         },
         series: seriesInfo(),
       };
-      console.log(option);
       chart.setOption(option);
       this.useData = [];
     },

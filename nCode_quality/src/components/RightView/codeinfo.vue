@@ -526,11 +526,11 @@ export default {
 }
 
 .isNew {
-  background-color: rgb(35, 203, 167);
+  background-color: rgba(35, 203, 167, 0.5);
 }
 
 .isDel {
-  background-color: rgb(226, 106, 106);
+  background-color: rgba(226, 106, 106, 0.5);
 }
 /* 设置页面行号显示格式 */
 .lineNum {
@@ -613,7 +613,7 @@ button:hover {
 }
 
 .lineIssuesTrue {
-  background-color: rgb(92, 151, 191);
+  background-color: rgba(92, 151, 191, 0.5);
 }
 
 .lineIssuesFalse {
@@ -621,10 +621,10 @@ button:hover {
 }
 
 .issuesNewTrue {
-  background-color: rgb(207, 0, 15);
+  background-color: rgba(207, 0, 15, 0.5);
 }
 .issuesDelTrue {
-  background-color: rgb(123, 239, 178);
+  background-color: rgba(123, 239, 178, 0.5);
 }
 
 .lineIssueDetail {

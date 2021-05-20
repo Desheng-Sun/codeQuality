@@ -74,6 +74,20 @@ export default {
             return b.value - a.value;
           });
       }
+      let name = [
+        "commiter",
+        "issuesAdd",
+        "issuesDel",
+        "CRITICAL",
+        "BLOCKER",
+        "MAJOR",
+        "MINOR",
+        "INFO",
+        "BUG",
+        "VULNERABILITY",
+        "CODE_SMELL",
+        "IssuesRule",
+      ];
       let color = [
         ["rgba(236, 100, 75,0.5)", "rgba(123, 239, 178,0.5)"],
         [
@@ -136,7 +150,7 @@ export default {
           : "";
         let z2 = api.value("depth") * 2;
         let colornow = "";
-
+        let namenow = "";
         let nodeitem = nodePath.split("->");
         nodeitem = nodeitem[nodeitem.length - 1].trim();
 
@@ -147,34 +161,45 @@ export default {
         } else if (node.depth == 2) {
           if (nodeitem == "issuesAdd") {
             colornow = color[0][0];
+            namenow = name[0]
           } else {
             colornow = color[0][1];
+            namenow = name[1]
           }
         } else if (node.depth == 3) {
           if (nodeitem == "CRITICAL") {
             colornow = color[1][0];
+            namenow = name[2]
           } else if (nodeitem == "BLOCKER") {
             colornow = color[1][1];
+            namenow = name[3]
           } else if (nodeitem == "MAJOR") {
             colornow = color[1][2];
+            namenow = name[4]
           } else if (nodeitem == "MINOR") {
             colornow = color[1][3];
+            namenow = name[5]
           } else if (nodeitem == "INFO") {
             colornow = color[1][4];
+            namenow = name[6]
           }
         } else if (node.depth == 4) {
           if (nodeitem == "BUG") {
             colornow = color[2][0];
+            namenow = name[7]
           } else if (nodeitem == "VULNERABILITY") {
             colornow = color[2][1];
+            namenow = name[8]
           } else if (nodeitem == "CODE_SMELL") {
             colornow = color[2][2];
+            namenow = name[9]
           }
         } else {
           colornow = "rgba(244,244,244)";
         }
         return {
           type: "circle",
+          name: namenow,
           focus: focus,
           shape: {
             cx: node.x,
@@ -232,6 +257,12 @@ export default {
           position: function (point, params, dom, rect, size) {
             return [point[0], point[1]];
           },
+        },
+        legend:{
+          data:name,
+          left:0,
+          bottom:0,
+          top:0
         },
         hoverLayerThreshold: Infinity,
         series: {
